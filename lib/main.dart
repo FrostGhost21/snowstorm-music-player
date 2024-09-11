@@ -43,7 +43,7 @@ void addFolder() async {
     for (String path in songs) {
       Tag? tag = await AudioTags.read(path);
       String title = tag?.title ?? path.split('/')[-1];
-      //TODOL insert into snowstormDB
+      //TODO: insert into snowstormDB
     }
   }
 }
