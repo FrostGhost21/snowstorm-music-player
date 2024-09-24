@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:audiotags/audiotags.dart';
 import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
@@ -47,7 +48,15 @@ Future<Widget> body(Ref ref) async {
   final snowStormDB = AppDatabase();
   List<Song> songs = await snowStormDB.allSongs();
   for (Song song in songs) {
-    a.add(Center(child: Text(song.name)));
+    a.add(Row(children: [
+      FilledButton(
+          onPressed: () async {
+            AudioPlayer player = await getPlayer(ref);
+            await player.play(DeviceFileSource(song.path));
+          },
+          child: const Icon(Icons.not_started_rounded))
+    ]));
+    a.add(Text(song.name));
   }
   return GridView.count(
     crossAxisCount: 2,
@@ -89,3 +98,11 @@ List<String> filter(List<String> list, String ext) {
   }
   return result;
 }
+
+@riverpod
+Future<AudioPlayer> getPlayer(Ref ref) async {
+  final player = AudioPlayer();
+  return player;
+}
+
+class AppState {}

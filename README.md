@@ -3,7 +3,17 @@
 Plays locally stored music, with a few extras.
 
 # Features
-- [ ] actually play music
+- [-] actually play music
+
+It does play music. 
+
+It won't say what the song is though.
+
+It also overlaps.
+
+It also can't be stopped.
+
+An AppState is being implemented. (famous last words of any project).
 
 # Soon ™️
 - [ ] queues
