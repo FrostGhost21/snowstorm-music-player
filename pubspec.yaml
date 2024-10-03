@@ -41,6 +41,9 @@ dependencies:
   drift: ^2.20.2
   drift_flutter: ^0.2.0
   audioplayers: ^6.1.0
+  just_audio: ^0.9.40
+  json_annotation: ^4.9.0
+  json_serializable: ^6.8.0
 
 dev_dependencies:
   flutter_test:
