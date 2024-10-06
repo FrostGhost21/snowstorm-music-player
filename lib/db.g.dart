@@ -21,9 +21,16 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
   @override
   late final GeneratedColumn<String> path = GeneratedColumn<String>(
       'path', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, path];
+  List<GeneratedColumn> get $columns => [id, path, name];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -43,6 +50,12 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
     } else if (isInserting) {
       context.missing(_pathMeta);
     }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
     return context;
   }
 
@@ -56,6 +69,8 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       path: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}path'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
     );
   }
 
@@ -68,12 +83,14 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
 class Song extends DataClass implements Insertable<Song> {
   final int id;
   final String path;
-  const Song({required this.id, required this.path});
+  final String name;
+  const Song({required this.id, required this.path, required this.name});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['path'] = Variable<String>(path);
+    map['name'] = Variable<String>(name);
     return map;
   }
 
@@ -81,6 +98,7 @@ class Song extends DataClass implements Insertable<Song> {
     return SongsCompanion(
       id: Value(id),
       path: Value(path),
+      name: Value(name),
     );
   }
 
@@ -90,6 +108,7 @@ class Song extends DataClass implements Insertable<Song> {
     return Song(
       id: serializer.fromJson<int>(json['id']),
       path: serializer.fromJson<String>(json['path']),
+      name: serializer.fromJson<String>(json['name']),
     );
   }
   @override
@@ -98,17 +117,20 @@ class Song extends DataClass implements Insertable<Song> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'path': serializer.toJson<String>(path),
+      'name': serializer.toJson<String>(name),
     };
   }
 
-  Song copyWith({int? id, String? path}) => Song(
+  Song copyWith({int? id, String? path, String? name}) => Song(
         id: id ?? this.id,
         path: path ?? this.path,
+        name: name ?? this.name,
       );
   Song copyWithCompanion(SongsCompanion data) {
     return Song(
       id: data.id.present ? data.id.value : this.id,
       path: data.path.present ? data.path.value : this.path,
+      name: data.name.present ? data.name.value : this.name,
     );
   }
 
@@ -116,44 +138,56 @@ class Song extends DataClass implements Insertable<Song> {
   String toString() {
     return (StringBuffer('Song(')
           ..write('id: $id, ')
-          ..write('path: $path')
+          ..write('path: $path, ')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, path);
+  int get hashCode => Object.hash(id, path, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Song && other.id == this.id && other.path == this.path);
+      (other is Song &&
+          other.id == this.id &&
+          other.path == this.path &&
+          other.name == this.name);
 }
 
 class SongsCompanion extends UpdateCompanion<Song> {
   final Value<int> id;
   final Value<String> path;
+  final Value<String> name;
   const SongsCompanion({
     this.id = const Value.absent(),
     this.path = const Value.absent(),
+    this.name = const Value.absent(),
   });
   SongsCompanion.insert({
     this.id = const Value.absent(),
     required String path,
-  }) : path = Value(path);
+    required String name,
+  })  : path = Value(path),
+        name = Value(name);
   static Insertable<Song> custom({
     Expression<int>? id,
     Expression<String>? path,
+    Expression<String>? name,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (path != null) 'path': path,
+      if (name != null) 'name': name,
     });
   }
 
-  SongsCompanion copyWith({Value<int>? id, Value<String>? path}) {
+  SongsCompanion copyWith(
+      {Value<int>? id, Value<String>? path, Value<String>? name}) {
     return SongsCompanion(
       id: id ?? this.id,
       path: path ?? this.path,
+      name: name ?? this.name,
     );
   }
 
@@ -166,6 +200,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
     if (path.present) {
       map['path'] = Variable<String>(path.value);
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
     return map;
   }
 
@@ -173,7 +210,8 @@ class SongsCompanion extends UpdateCompanion<Song> {
   String toString() {
     return (StringBuffer('SongsCompanion(')
           ..write('id: $id, ')
-          ..write('path: $path')
+          ..write('path: $path, ')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
@@ -374,10 +412,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$SongsTableCreateCompanionBuilder = SongsCompanion Function({
   Value<int> id,
   required String path,
+  required String name,
 });
 typedef $$SongsTableUpdateCompanionBuilder = SongsCompanion Function({
   Value<int> id,
   Value<String> path,
+  Value<String> name,
 });
 
 class $$SongsTableFilterComposer
@@ -392,6 +432,11 @@ class $$SongsTableFilterComposer
       column: $state.table.path,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$SongsTableOrderingComposer
@@ -404,6 +449,11 @@ class $$SongsTableOrderingComposer
 
   ColumnOrderings<String> get path => $state.composableBuilder(
       column: $state.table.path,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
@@ -430,18 +480,22 @@ class $$SongsTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> path = const Value.absent(),
+            Value<String> name = const Value.absent(),
           }) =>
               SongsCompanion(
             id: id,
             path: path,
+            name: name,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String path,
+            required String name,
           }) =>
               SongsCompanion.insert(
             id: id,
             path: path,
+            name: name,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

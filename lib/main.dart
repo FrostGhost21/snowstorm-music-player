@@ -35,7 +35,9 @@ class SnowstormStart extends ConsumerWidget {
       textDirection: TextDirection.ltr,
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            addFolder();
+          },
           child: const Icon(Icons.folder),
         ),
         body: body(),
@@ -50,7 +52,7 @@ Widget body() {
   for (Song song in songs) {
     widgets.add(ListTile(
       leading: const Icon(Icons.abc_outlined),
-      title: Text(song.path),
+      title: Text(song.name),
       onTap: () {
         getIt<AppState>().playSong(song.id);
       },
@@ -60,4 +62,39 @@ Widget body() {
   return ListView(
     children: widgets,
   );
+}
+
+void addFolder() async {
+  final snowstormDB = getIt<AppState>().database;
+  Permission.manageExternalStorage.request();
+  final path = await FilePicker.platform.getDirectoryPath();
+  if (path != null) {
+    Directory dir = Directory(path);
+    List<String> songs = await directoryList(dir);
+    songs = filter(songs, "flac");
+    for (String path in songs) {
+      Tag? tag = await AudioTags.read(path);
+      String title = tag?.title ?? path.split('/')[-1];
+      snowstormDB
+          .addSongs(SongsCompanion(path: Value(path), name: Value(title)));
+    }
+  }
+}
+
+Future<List<String>> directoryList(Directory dir) async {
+  List<String> files = [];
+  await for (FileSystemEntity file in dir.list(recursive: true)) {
+    files.add(file.path);
+  }
+  return files;
+}
+
+List<String> filter(List<String> list, String ext) {
+  List<String> result = [];
+  for (String item in list) {
+    if (item.endsWith(ext)) {
+      result.add(item);
+    }
+  }
+  return result;
 }

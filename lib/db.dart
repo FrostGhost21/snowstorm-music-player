@@ -6,6 +6,7 @@ part 'db.g.dart';
 class Songs extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get path => text().unique()();
+  TextColumn get name => text()();
 }
 
 class Playlists extends Table {
