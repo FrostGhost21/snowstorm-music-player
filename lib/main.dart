@@ -54,7 +54,8 @@ Widget body() {
       leading: const Icon(Icons.abc_outlined),
       title: Text(song.name),
       onTap: () {
-        getIt<AppState>().playSong(song.id);
+        //To be in line with the playlist's index, we take awawy one.
+        getIt<AppState>().playSong(song.id - 1);
       },
     ));
   }
