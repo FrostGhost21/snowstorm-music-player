@@ -7,14 +7,20 @@ class AppState {
   AudioPlayer player;
   AppState(this.playlist, this.database, this.player);
 
-  void updatePlaylist(List<int> songs) {}
+  void playSong(int id) {
+    player.seek(Duration.zero, index: id);
+    if (!player.playing) {
+      player.play();
+    }
+  }
 
-  void initPlaylist() async {
+  Future<void> initPlaylist() async {
     List<AudioSource> audioSources = [];
     for (Song song in await database.getSongs()) {
       audioSources.add(AudioSource.file(song.path));
     }
     playlist = ConcatenatingAudioSource(
         children: audioSources, useLazyPreparation: true);
+    player.setAudioSource(preload: false, initialIndex: 0, playlist);
   }
 }

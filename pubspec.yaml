@@ -44,6 +44,7 @@ dependencies:
   just_audio: ^0.9.40
   json_annotation: ^4.9.0
   json_serializable: ^6.8.0
+  get_it: ^8.0.0
 
 dev_dependencies:
   flutter_test:
