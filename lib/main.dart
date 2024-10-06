@@ -12,7 +12,9 @@ import 'package:snowstorm_v2/db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  AppDatabase database = AppDatabase();
+  AudioPlayer player = AudioPlayer();
+  ConcatenatingAudioSource playlist = ConcatenatingAudioSource(children: []);
   runApp(const ProviderScope(child: SnowstormStart()));
 }
 

@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:snowstorm_v2/types.dart';
 
 part 'db.g.dart';
 
@@ -11,7 +10,7 @@ class Songs extends Table {
 
 class Playlists extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get playlists => text().map(const PlaylistConverter())();
+  TextColumn get playlists => text()();
 }
 
 @DriftDatabase(tables: [Songs, Playlists])
@@ -31,6 +30,22 @@ class AppDatabase extends _$AppDatabase {
 
   void addPlaylist(PlaylistsCompanion playlist) {
     into(playlists).insert(playlist);
+  }
+
+  String convertListIntIntoString(List<int> list) {
+    String result = "";
+    for (int value in list) {
+      result = "$result.$value";
+    }
+    return result;
+  }
+
+  List<int> convertStringIntoListInt(String string) {
+    List<int> list = [];
+    for (String value in string.split('.')) {
+      list.add(value as int);
+    }
+    return list;
   }
 
   Future<List<Song>> getSongs() {

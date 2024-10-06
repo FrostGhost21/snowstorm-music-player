@@ -197,10 +197,9 @@ class $PlaylistsTable extends Playlists
   static const VerificationMeta _playlistsMeta =
       const VerificationMeta('playlists');
   @override
-  late final GeneratedColumnWithTypeConverter<Playlist, String> playlists =
-      GeneratedColumn<String>('playlists', aliasedName, false,
-              type: DriftSqlType.string, requiredDuringInsert: true)
-          .withConverter<Playlist>($PlaylistsTable.$converterplaylists);
+  late final GeneratedColumn<String> playlists = GeneratedColumn<String>(
+      'playlists', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, playlists];
   @override
@@ -216,7 +215,12 @@ class $PlaylistsTable extends Playlists
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    context.handle(_playlistsMeta, const VerificationResult.success());
+    if (data.containsKey('playlists')) {
+      context.handle(_playlistsMeta,
+          playlists.isAcceptableOrUnknown(data['playlists']!, _playlistsMeta));
+    } else if (isInserting) {
+      context.missing(_playlistsMeta);
+    }
     return context;
   }
 
@@ -228,9 +232,8 @@ class $PlaylistsTable extends Playlists
     return Playlist(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      playlists: $PlaylistsTable.$converterplaylists.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}playlists'])!),
+      playlists: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}playlists'])!,
     );
   }
 
@@ -238,23 +241,17 @@ class $PlaylistsTable extends Playlists
   $PlaylistsTable createAlias(String alias) {
     return $PlaylistsTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<Playlist, String> $converterplaylists =
-      const PlaylistConverter();
 }
 
 class Playlist extends DataClass implements Insertable<Playlist> {
   final int id;
-  final Playlist playlists;
+  final String playlists;
   const Playlist({required this.id, required this.playlists});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    {
-      map['playlists'] = Variable<String>(
-          $PlaylistsTable.$converterplaylists.toSql(playlists));
-    }
+    map['playlists'] = Variable<String>(playlists);
     return map;
   }
 
@@ -270,7 +267,7 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Playlist(
       id: serializer.fromJson<int>(json['id']),
-      playlists: serializer.fromJson<Playlist>(json['playlists']),
+      playlists: serializer.fromJson<String>(json['playlists']),
     );
   }
   @override
@@ -278,11 +275,11 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'playlists': serializer.toJson<Playlist>(playlists),
+      'playlists': serializer.toJson<String>(playlists),
     };
   }
 
-  Playlist copyWith({int? id, Playlist? playlists}) => Playlist(
+  Playlist copyWith({int? id, String? playlists}) => Playlist(
         id: id ?? this.id,
         playlists: playlists ?? this.playlists,
       );
@@ -314,14 +311,14 @@ class Playlist extends DataClass implements Insertable<Playlist> {
 
 class PlaylistsCompanion extends UpdateCompanion<Playlist> {
   final Value<int> id;
-  final Value<Playlist> playlists;
+  final Value<String> playlists;
   const PlaylistsCompanion({
     this.id = const Value.absent(),
     this.playlists = const Value.absent(),
   });
   PlaylistsCompanion.insert({
     this.id = const Value.absent(),
-    required Playlist playlists,
+    required String playlists,
   }) : playlists = Value(playlists);
   static Insertable<Playlist> custom({
     Expression<int>? id,
@@ -333,7 +330,7 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
     });
   }
 
-  PlaylistsCompanion copyWith({Value<int>? id, Value<Playlist>? playlists}) {
+  PlaylistsCompanion copyWith({Value<int>? id, Value<String>? playlists}) {
     return PlaylistsCompanion(
       id: id ?? this.id,
       playlists: playlists ?? this.playlists,
@@ -347,8 +344,7 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
       map['id'] = Variable<int>(id.value);
     }
     if (playlists.present) {
-      map['playlists'] = Variable<String>(
-          $PlaylistsTable.$converterplaylists.toSql(playlists.value));
+      map['playlists'] = Variable<String>(playlists.value);
     }
     return map;
   }
@@ -467,11 +463,11 @@ typedef $$SongsTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$PlaylistsTableCreateCompanionBuilder = PlaylistsCompanion Function({
   Value<int> id,
-  required Playlist playlists,
+  required String playlists,
 });
 typedef $$PlaylistsTableUpdateCompanionBuilder = PlaylistsCompanion Function({
   Value<int> id,
-  Value<Playlist> playlists,
+  Value<String> playlists,
 });
 
 class $$PlaylistsTableFilterComposer
@@ -482,12 +478,10 @@ class $$PlaylistsTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnWithTypeConverterFilters<Playlist, Playlist, String> get playlists =>
-      $state.composableBuilder(
-          column: $state.table.playlists,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+  ColumnFilters<String> get playlists => $state.composableBuilder(
+      column: $state.table.playlists,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$PlaylistsTableOrderingComposer
@@ -525,7 +519,7 @@ class $$PlaylistsTableTableManager extends RootTableManager<
               $$PlaylistsTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<Playlist> playlists = const Value.absent(),
+            Value<String> playlists = const Value.absent(),
           }) =>
               PlaylistsCompanion(
             id: id,
@@ -533,7 +527,7 @@ class $$PlaylistsTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required Playlist playlists,
+            required String playlists,
           }) =>
               PlaylistsCompanion.insert(
             id: id,
