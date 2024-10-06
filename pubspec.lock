@@ -453,6 +453,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  functional_listener:
+    dependency: transitive
+    description:
+      name: functional_listener
+      sha256: c096db771b4ce7ba0f886cc4a761044b11e8276a7bc24cfc812dc4b2bc6f5b16
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   get_it:
     dependency: "direct main"
     description:
@@ -1066,6 +1074,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.2.5"
+  watch_it:
+    dependency: "direct main"
+    description:
+      name: watch_it
+      sha256: aadbf4ddff777434fc17645d68c5337fc259960f063b900fe83fb9a61b18cb08
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.1"
   watcher:
     dependency: transitive
     description:

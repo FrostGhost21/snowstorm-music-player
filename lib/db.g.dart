@@ -397,16 +397,175 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
   }
 }
 
+class $UserDataTable extends UserData
+    with TableInfo<$UserDataTable, UserDataData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserDataTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _apikeyMeta = const VerificationMeta('apikey');
+  @override
+  late final GeneratedColumn<String> apikey = GeneratedColumn<String>(
+      'apikey', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [apikey];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_data';
+  @override
+  VerificationContext validateIntegrity(Insertable<UserDataData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('apikey')) {
+      context.handle(_apikeyMeta,
+          apikey.isAcceptableOrUnknown(data['apikey']!, _apikeyMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  UserDataData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserDataData(
+      apikey: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}apikey']),
+    );
+  }
+
+  @override
+  $UserDataTable createAlias(String alias) {
+    return $UserDataTable(attachedDatabase, alias);
+  }
+}
+
+class UserDataData extends DataClass implements Insertable<UserDataData> {
+  final String? apikey;
+  const UserDataData({this.apikey});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || apikey != null) {
+      map['apikey'] = Variable<String>(apikey);
+    }
+    return map;
+  }
+
+  UserDataCompanion toCompanion(bool nullToAbsent) {
+    return UserDataCompanion(
+      apikey:
+          apikey == null && nullToAbsent ? const Value.absent() : Value(apikey),
+    );
+  }
+
+  factory UserDataData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserDataData(
+      apikey: serializer.fromJson<String?>(json['apikey']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'apikey': serializer.toJson<String?>(apikey),
+    };
+  }
+
+  UserDataData copyWith({Value<String?> apikey = const Value.absent()}) =>
+      UserDataData(
+        apikey: apikey.present ? apikey.value : this.apikey,
+      );
+  UserDataData copyWithCompanion(UserDataCompanion data) {
+    return UserDataData(
+      apikey: data.apikey.present ? data.apikey.value : this.apikey,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserDataData(')
+          ..write('apikey: $apikey')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => apikey.hashCode;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserDataData && other.apikey == this.apikey);
+}
+
+class UserDataCompanion extends UpdateCompanion<UserDataData> {
+  final Value<String?> apikey;
+  final Value<int> rowid;
+  const UserDataCompanion({
+    this.apikey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserDataCompanion.insert({
+    this.apikey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  static Insertable<UserDataData> custom({
+    Expression<String>? apikey,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (apikey != null) 'apikey': apikey,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserDataCompanion copyWith({Value<String?>? apikey, Value<int>? rowid}) {
+    return UserDataCompanion(
+      apikey: apikey ?? this.apikey,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (apikey.present) {
+      map['apikey'] = Variable<String>(apikey.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserDataCompanion(')
+          ..write('apikey: $apikey, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SongsTable songs = $SongsTable(this);
   late final $PlaylistsTable playlists = $PlaylistsTable(this);
+  late final $UserDataTable userData = $UserDataTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [songs, playlists];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [songs, playlists, userData];
 }
 
 typedef $$SongsTableCreateCompanionBuilder = SongsCompanion Function({
@@ -605,6 +764,86 @@ typedef $$PlaylistsTableProcessedTableManager = ProcessedTableManager<
     (Playlist, BaseReferences<_$AppDatabase, $PlaylistsTable, Playlist>),
     Playlist,
     PrefetchHooks Function()>;
+typedef $$UserDataTableCreateCompanionBuilder = UserDataCompanion Function({
+  Value<String?> apikey,
+  Value<int> rowid,
+});
+typedef $$UserDataTableUpdateCompanionBuilder = UserDataCompanion Function({
+  Value<String?> apikey,
+  Value<int> rowid,
+});
+
+class $$UserDataTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $UserDataTable> {
+  $$UserDataTableFilterComposer(super.$state);
+  ColumnFilters<String> get apikey => $state.composableBuilder(
+      column: $state.table.apikey,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$UserDataTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $UserDataTable> {
+  $$UserDataTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get apikey => $state.composableBuilder(
+      column: $state.table.apikey,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $$UserDataTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $UserDataTable,
+    UserDataData,
+    $$UserDataTableFilterComposer,
+    $$UserDataTableOrderingComposer,
+    $$UserDataTableCreateCompanionBuilder,
+    $$UserDataTableUpdateCompanionBuilder,
+    (UserDataData, BaseReferences<_$AppDatabase, $UserDataTable, UserDataData>),
+    UserDataData,
+    PrefetchHooks Function()> {
+  $$UserDataTableTableManager(_$AppDatabase db, $UserDataTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$UserDataTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$UserDataTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String?> apikey = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              UserDataCompanion(
+            apikey: apikey,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<String?> apikey = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              UserDataCompanion.insert(
+            apikey: apikey,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$UserDataTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $UserDataTable,
+    UserDataData,
+    $$UserDataTableFilterComposer,
+    $$UserDataTableOrderingComposer,
+    $$UserDataTableCreateCompanionBuilder,
+    $$UserDataTableUpdateCompanionBuilder,
+    (UserDataData, BaseReferences<_$AppDatabase, $UserDataTable, UserDataData>),
+    UserDataData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -613,4 +852,6 @@ class $AppDatabaseManager {
       $$SongsTableTableManager(_db, _db.songs);
   $$PlaylistsTableTableManager get playlists =>
       $$PlaylistsTableTableManager(_db, _db.playlists);
+  $$UserDataTableTableManager get userData =>
+      $$UserDataTableTableManager(_db, _db.userData);
 }

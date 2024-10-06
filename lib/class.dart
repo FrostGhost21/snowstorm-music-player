@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:snowstorm_v2/db.dart';
 
@@ -5,7 +7,19 @@ class AppState {
   ConcatenatingAudioSource playlist;
   AppDatabase database;
   AudioPlayer player;
-  AppState(this.playlist, this.database, this.player);
+  int page;
+  String? thisIsLowerCamelCaseOSUAPIKey;
+  AppState(this.playlist, this.database, this.player, this.page);
+
+  Future<bool> checkOSUAPIKey() async {
+    String? potentialKey = await database.getOSUKey();
+    if (potentialKey == null) {
+      return false;
+    } else {
+      thisIsLowerCamelCaseOSUAPIKey = potentialKey;
+      return true;
+    }
+  }
 
   void playSong(int id) {
     player.seek(Duration.zero, index: id);

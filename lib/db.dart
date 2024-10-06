@@ -14,7 +14,11 @@ class Playlists extends Table {
   TextColumn get playlists => text()();
 }
 
-@DriftDatabase(tables: [Songs, Playlists])
+class UserData extends Table {
+  TextColumn get apikey => text().nullable()();
+}
+
+@DriftDatabase(tables: [Songs, Playlists, UserData])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -31,6 +35,15 @@ class AppDatabase extends _$AppDatabase {
 
   void addPlaylist(PlaylistsCompanion playlist) {
     into(playlists).insert(playlist);
+  }
+
+  void addOSUKey(UserDataCompanion data) {
+    into(userData).insert(data);
+  }
+
+  Future<String?> getOSUKey() async {
+    List<UserDataData> futureString = await select(userData).get();
+    return futureString[0].apikey;
   }
 
   String convertListIntIntoString(List<int> list) {
