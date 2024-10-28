@@ -1,7 +1,7 @@
 import 'dart:ffi';
 
 import 'package:just_audio/just_audio.dart';
-import 'package:snowstorm_v2/db.dart';
+import 'package:snowstorm_v2/old/db.dart';
 
 class AppState {
   ConcatenatingAudioSource playlist;

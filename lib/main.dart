@@ -1,65 +1,107 @@
-import 'package:get_it/get_it.dart';
-import 'package:just_audio/just_audio.dart';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:snowstorm_v2/class.dart';
-import 'package:snowstorm_v2/db.dart';
-import 'package:snowstorm_v2/pages/music.dart';
-import 'package:snowstorm_v2/pages/web.dart';
+import 'package:go_router/go_router.dart';
 
-final getIt = GetIt.instance;
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  AppDatabase database = AppDatabase();
-  AudioPlayer player = AudioPlayer();
-  ConcatenatingAudioSource playlist = ConcatenatingAudioSource(children: []);
-  //0 is the default page
-  AppState appState = AppState(playlist, database, player, 0);
-
-  getIt.registerSingleton<List<Song>>(await appState.database.getSongs());
-  getIt.registerSingleton<AppState>(appState);
-  await getIt<AppState>().initPlaylist();
-  await getIt<AppState>().checkOSUAPIKey();
-
-  runApp(const SnowstormStart());
+final router = GoRouter(routes: [
+  GoRoute(
+    path: '/',
+    builder: (context, state) => first_time(),
+  ),
+  GoRoute(
+    path: '/local',
+    builder: (context, state) => local_files(),
+  ),
+  GoRoute(
+    path: '/jellyfin',
+    builder: (context, state) => jellyfin(),
+  ),
+  GoRoute(path: '/jellyfin/login', builder: (context, state) => const login())
+]);
+void main() {
+  runApp(ui_mockup());
 }
 
-class SnowstormStart extends StatefulWidget {
-  const SnowstormStart({super.key});
-  @override
-  State<SnowstormStart> createState() => _SnowstormStartState();
-}
-
-class _SnowstormStartState extends State<SnowstormStart> {
-  int _index = 0;
+class ui_mockup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Directionality(
-      textDirection: TextDirection.ltr,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            addFolder();
-          },
-          child: const Icon(Icons.folder),
-        ),
-        body: [body(), network()][getIt<AppState>().page],
-        bottomNavigationBar: NavigationBar(
-          destinations: const [
-            NavigationDestination(
-                icon: Icon(Icons.import_contacts), label: "web"),
-            NavigationDestination(
-                icon: Icon(Icons.import_contacts), label: "music")
-          ],
-          selectedIndex: getIt<AppState>().page,
-          onDestinationSelected: (int index) {
-            getIt<AppState>().page = index;
-            setState(() {
-              _index = index;
-            });
-          },
-        ),
-      ),
-    ));
+    return MaterialApp.router(
+      theme: ThemeData(
+          primarySwatch: Colors.purple,
+          scaffoldBackgroundColor: Colors.deepPurple[100],
+          textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white))),
+      routerConfig: router,
+    );
+  }
+}
+
+class local_files extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Text("in local files"),
+    );
+  }
+}
+
+class jellyfin extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Text("in jellyfin"),
+    );
+  }
+}
+
+class login extends StatefulWidget {
+  const login({super.key});
+
+  @override
+  State<login> createState() => login_state();
+}
+
+class login_state extends State<login> {
+  final key = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}
+
+class first_time extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        extendBody: true,
+        body: SafeArea(
+            maintainBottomViewPadding: true,
+            child: Container(
+              width: MediaQuery.sizeOf(context).width,
+              height: MediaQuery.sizeOf(context).height,
+              margin: EdgeInsets.all(MediaQuery.sizeOf(context).height / 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        router.go('/local');
+                      },
+                      child: const Text("Local files only")),
+                  Padding(
+                      padding: EdgeInsets.all(
+                          0.1 * MediaQuery.sizeOf(context).height)),
+                  TextButton(
+                      onPressed: () {
+                        router.go('/jellyfin/login');
+                      },
+                      child: const Text("Setup Jellyfin")),
+                ],
+              ),
+            )));
   }
 }
