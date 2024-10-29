@@ -5,7 +5,7 @@ Plays locally stored music, with no extras.
 # Features
 - [X] actually play music
 
-It does play music. 
+It does play music.
 
 It can't be stopped.
 
