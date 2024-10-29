@@ -41,8 +41,22 @@ class ui_mockup extends StatelessWidget {
 class local_files extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text("in local files"),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            child: ListTile(
+              leading: Icon(Icons.add),
+              title: Text("Add a folder"),
+              onTap: () {},
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(22))),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 22.0),
+          )
+        ],
+      ),
     );
   }
 }
