@@ -9,7 +9,7 @@ final router = GoRouter(routes: [
     builder: (context, state) => first_time(),
   ),
   GoRoute(
-    path: '/local',
+    path: '/local/setup',
     builder: (context, state) => local_files(),
   ),
   GoRoute(
@@ -79,29 +79,43 @@ class first_time extends StatelessWidget {
     return Scaffold(
         extendBody: true,
         body: SafeArea(
-            maintainBottomViewPadding: true,
-            child: Container(
-              width: MediaQuery.sizeOf(context).width,
-              height: MediaQuery.sizeOf(context).height,
-              margin: EdgeInsets.all(MediaQuery.sizeOf(context).height / 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        router.go('/local');
-                      },
-                      child: const Text("Local files only")),
-                  Padding(
-                      padding: EdgeInsets.all(
-                          0.1 * MediaQuery.sizeOf(context).height)),
-                  TextButton(
-                      onPressed: () {
-                        router.go('/jellyfin/login');
-                      },
-                      child: const Text("Setup Jellyfin")),
-                ],
+          maintainBottomViewPadding: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).height * 0.1),
+                child: const Center(
+                  child: Text(
+                      style: TextStyle(fontSize: 19.0, color: Colors.brown),
+                      "You can choose between using Local files or a Jellyfin instamce. You can always add more later."),
+                ),
               ),
-            )));
+              Container(
+                child: Center(
+                  child: TextButton(
+                      onPressed: () {
+                        router.go("/local/setup");
+                        ;
+                      },
+                      child: const Text("Use local files")),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).height * 0.1),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      router.go("/jellyfin/login");
+                    },
+                    child: const Text("Use Jellyfin"),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }
