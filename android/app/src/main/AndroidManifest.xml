@@ -1,8 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-    
     <application
-        android:label="snowstorm_v2"
+        android:label="ui_mockup"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
