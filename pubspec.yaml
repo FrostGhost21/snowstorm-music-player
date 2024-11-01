@@ -46,6 +46,7 @@ dependencies:
   json_serializable: ^6.8.0
   get_it: ^8.0.0
   watch_it: ^1.5.1
+  go_router: ^14.3.0
 
 dev_dependencies:
   flutter_test:

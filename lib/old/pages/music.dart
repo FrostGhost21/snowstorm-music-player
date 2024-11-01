@@ -6,8 +6,8 @@ import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:snowstorm_v2/class.dart';
-import 'package:snowstorm_v2/db.dart';
+import 'package:snowstorm_v2/old/class.dart';
+import 'package:snowstorm_v2/old/db.dart';
 
 final getIt = GetIt.instance;
 
