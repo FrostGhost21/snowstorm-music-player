@@ -1,28 +1,27 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(routes: [
   GoRoute(
     path: '/',
-    builder: (context, state) => first_time(),
+    builder: (context, state) => const FirstTime(),
   ),
   GoRoute(
     path: '/local/setup',
-    builder: (context, state) => local_files(),
+    builder: (context, state) => const LocalFiles(),
   ),
   GoRoute(
     path: '/jellyfin',
-    builder: (context, state) => jellyfin(),
+    builder: (context, state) => const Jellyfin(),
   ),
-  GoRoute(path: '/jellyfin/login', builder: (context, state) => const login())
+  GoRoute(path: '/jellyfin/login', builder: (context, state) => const Login())
 ]);
 void main() {
-  runApp(ui_mockup());
+  runApp(const UIMockup());
 }
 
-class ui_mockup extends StatelessWidget {
+class UIMockup extends StatelessWidget {
+  const UIMockup({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -38,7 +37,8 @@ class ui_mockup extends StatelessWidget {
   }
 }
 
-class local_files extends StatelessWidget {
+class LocalFiles extends StatelessWidget {
+  const LocalFiles({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,14 +46,14 @@ class local_files extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
+            padding: const EdgeInsets.symmetric(horizontal: 22.0),
             child: ListTile(
-              leading: Icon(Icons.add),
-              title: Text("Add a folder"),
+              leading: const Icon(Icons.add),
+              title: const Text("Add a folder"),
               onTap: () {},
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(22))),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 22.0),
           )
         ],
       ),
@@ -61,7 +61,8 @@ class local_files extends StatelessWidget {
   }
 }
 
-class jellyfin extends StatelessWidget {
+class Jellyfin extends StatelessWidget {
+  const Jellyfin({super.key});
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -70,14 +71,14 @@ class jellyfin extends StatelessWidget {
   }
 }
 
-class login extends StatefulWidget {
-  const login({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<login> createState() => login_state();
+  State<Login> createState() => LoginState();
 }
 
-class login_state extends State<login> {
+class LoginState extends State<Login> {
   final key = GlobalKey<FormState>();
 
   @override
@@ -89,7 +90,7 @@ class login_state extends State<login> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 62.0),
+              padding: const EdgeInsets.symmetric(horizontal: 62.0),
               child: TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -142,7 +143,9 @@ class login_state extends State<login> {
   }
 }
 
-class first_time extends StatelessWidget {
+class FirstTime extends StatelessWidget {
+  const FirstTime({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,15 +164,12 @@ class first_time extends StatelessWidget {
                       "You can choose between using Local files or a Jellyfin instamce. You can always add more later."),
                 ),
               ),
-              Container(
-                child: Center(
-                  child: TextButton(
-                      onPressed: () {
-                        router.go("/local/setup");
-                        ;
-                      },
-                      child: const Text("Use local files")),
-                ),
+              Center(
+                child: TextButton(
+                    onPressed: () {
+                      router.go("/local/setup");
+                    },
+                    child: const Text("Use local files")),
               ),
               Container(
                 padding: EdgeInsets.symmetric(
