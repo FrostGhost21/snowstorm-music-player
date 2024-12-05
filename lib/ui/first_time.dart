@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:snowstorm_v2/main.dart';
 
-class FirstTime extends StatelessWidget {
+class FirstTime extends ConsumerWidget {
   const FirstTime({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         extendBody: true,
         body: SafeArea(

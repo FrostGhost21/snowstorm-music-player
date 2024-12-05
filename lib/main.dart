@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snowstorm_v2/ui/first_time.dart';
 import 'package:snowstorm_v2/ui/jellyfin.dart';
@@ -22,5 +23,5 @@ final router = GoRouter(routes: [
   GoRoute(path: '/jellyfin/login', builder: (context, state) => const Login())
 ]);
 void main() {
-  runApp(const UIMockup());
+  runApp(const ProviderScope(child: UIMockup()));
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:snowstorm_v2/main.dart';
 
-class Login extends StatefulWidget {
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  State<Login> createState() => LoginState();
+  ConsumerState<Login> createState() => LoginState();
 }
 
-class LoginState extends State<Login> {
+class LoginState extends ConsumerState<Login> {
   final key = GlobalKey<FormState>();
 
   @override
